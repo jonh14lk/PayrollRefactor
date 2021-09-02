@@ -2,9 +2,9 @@
 
 <h1>Payroll System</h1>
 
-![](https://img.shields.io/github/last-commit/jonh14lk/PayrollSystem)
-![](https://img.shields.io/github/repo-size/jonh14lk/PayrollSystem)
-![](https://img.shields.io/github/languages/top/jonh14lk/PayrollSystem)
+![](https://img.shields.io/github/last-commit/jonh14lk/PayrollRefactor)
+![](https://img.shields.io/github/repo-size/jonh14lk/PayrollRefactor)
+![](https://img.shields.io/github/languages/top/jonh14lk/PayrollRefactor)
 
 </div>
 
