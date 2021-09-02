@@ -13,7 +13,6 @@ public class SyndicateEmployee implements Serializable {
 
     public boolean addServiceCharge(double charge) {
         this.service_charge += charge;
-        System.out.println("Taxa de serviço adicionada com sucesso!\n");
         return true;
     }
 

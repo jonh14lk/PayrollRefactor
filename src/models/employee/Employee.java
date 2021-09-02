@@ -10,6 +10,7 @@ public class Employee implements Serializable {
     public String name;
     public String address;
     public int id;
+    private int type;
     private boolean hourly;
     private boolean salaried;
     private boolean commissioned;
@@ -20,30 +21,16 @@ public class Employee implements Serializable {
     private double salary;
     private Calendar last_payment;
 
-    public Employee(String name, String address, int id, int type, int from_syndicate, Syndicate syndicate,
-            int payment_type, double salary, String payment_schedule) {
-        this.name = name;
-        this.address = address;
-        this.id = id;
-        this.setPaymentSchedule(payment_schedule);
-        this.setSalary(salary);
-        this.setType(type);
-        this.setPaymentType(payment_type);
+    public Employee() {
+        this.name = new String();
+        this.address = new String();
+        this.id = -1;
+        this.setPaymentSchedule("mensal $");
+        this.setSalary(0.0);
+        this.setType(1);
+        this.setPaymentType(1);
         this.setLastPayment(1, 1, 2021);
-        if (from_syndicate == 1) {
-            setSyndicate(syndicate);
-        }
-    }
-
-    public void editEmployee(String name, String address, int id, int type, int payment_type, double salary,
-            String payment_schedule) {
-        this.name = name;
-        this.address = address;
-        this.id = id;
-        this.setPaymentSchedule(payment_schedule);
-        this.setSalary(salary);
-        this.setType(type);
-        this.setPaymentType(payment_type);
+        this.setSyndicate(null, 0);
     }
 
     public void setPaymentSchedule(String str) {
@@ -103,6 +90,7 @@ public class Employee implements Serializable {
     }
 
     public boolean setType(int type) {
+        this.type = type;
         switch (type) {
             case 1:
                 this.hourly = true;
@@ -125,9 +113,20 @@ public class Employee implements Serializable {
         return false;
     }
 
-    public void setSyndicate(Syndicate syndicate) {
-        this.from_syndicate = true;
-        this.syndicate_employee_id = syndicate.createSyndicateEmployee();
+    public int getType() {
+        return this.type;
+    }
+
+    public boolean setSyndicate(Syndicate syndicate, int can) {
+        if (can == 1) {
+            this.from_syndicate = true;
+            this.syndicate_employee_id = syndicate.createSyndicateEmployee();
+        } else if (can == 0) {
+            this.from_syndicate = false;
+        } else {
+            return false;
+        }
+        return true;
     }
 
     public boolean getSyndicate() {
@@ -139,36 +138,77 @@ public class Employee implements Serializable {
     }
 
     public boolean getHourly() {
-        if (!this.hourly) {
-            System.out.println("O funcionario não é horista");
-        }
         return this.hourly;
     }
 
     public boolean getSalaried() {
-        if (!this.salaried) {
-            System.out.println("O funcionario não é assalariado");
-        }
         return this.salaried;
     }
 
     public boolean getComissioned() {
-        if (!this.commissioned) {
-            System.out.println("O funcionario não é comissiondo");
-        }
         return this.commissioned;
     }
 
-    public void printEmployee() {
-        System.out.println("Nome: " + this.name);
-        System.out.println("Endereço: " + this.address);
-        System.out.println("Id: " + this.id);
+    public void copyEmployee(Employee e) { // I will change this later
+        this.name = e.name;
+        this.address = e.address;
+        this.id = e.id;
+        this.hourly = e.hourly;
+        this.salaried = e.salaried;  
+        this.commissioned = e.commissioned;
+        this.from_syndicate = e.from_syndicate;
+        this.syndicate_employee_id = e.syndicate_employee_id;
+        this.payment_type = e.payment_type;
+        this.payment_schedule = e.payment_schedule;
+        this.salary = e.salary;
+        this.last_payment = e.last_payment;
     }
 
     public void payEmployee(Calendar current_date, Syndicate syndicate) {
-        System.out.println("Nome: " + this.name);
-        System.out.println("Id: " + this.id);
+        System.out.println(this.nameToString() + "\n" + this.idToString());
         this.setLastPayment(current_date.get(Calendar.DAY_OF_MONTH), current_date.get(Calendar.MONTH),
                 current_date.get(Calendar.YEAR));
+        System.out.println("");
+    }
+
+    public void printEmployee() {
+        System.out.println(this.toString());
+    }
+
+    public String idToString() {
+        return "Id: " + this.id;
+    }
+
+    public String nameToString() {
+        return "Nome: " + this.name;
+    }
+
+    public String addressToString() {
+        return "Endereço: " + this.address;
+    }
+
+    public String syndicateToString() {
+        if (this.getSyndicate()) {
+            return "Id do funcionario no sindicato: " + getSyndicateEmployeeId();
+        }
+        return "Não pertence ao sindicato";
+    }
+
+    public String salaryToString() {
+        return "Salário: " + this.getSalary();
+    }
+
+    public String paymentTypeToString() {
+        return "Forma de pagamento: " + this.getPaymentType();
+    }
+
+    public String paymentScheduleToString() {
+        return "Agenda de pagamento: " + this.getPaymentSchedule().toString();
+    }
+
+    public String toString() {
+        return this.nameToString() + "\n" + this.addressToString() + "\n" + this.idToString() + "\n"
+                + this.syndicateToString() + "\n" + this.salaryToString() + "\n" + this.paymentTypeToString() + "\n"
+                + this.paymentScheduleToString();
     }
 }

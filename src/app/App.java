@@ -1,70 +1,52 @@
 package src.app;
 
-import src.controllers.Company;
+import src.controllers.Routes;
 import src.utils.Utils;
 import java.util.Stack;
 
 public class App {
+    Routes routes;
+    Stack<String> stack;
+
+    public App() {
+        routes = new Routes();
+        stack = new Stack<String>();
+    }
+
+    interface Command {
+        void command();
+    }
+
+    private Command[] commands = new Command[] {
+        new Command() { public void command() { Utils.printHelp(); } },
+        new Command() { public void command() { routes.createEmployee(); } },
+        new Command() { public void command() { routes.removeEmployee(); } },
+        new Command() { public void command() { routes.addTimeCard(); } },
+        new Command() { public void command() { routes.addSale(); } },
+        new Command() { public void command() { routes.addServiceCharge(); } },
+        new Command() { public void command() { routes.editEmployee(); } },
+        new Command() { public void command() { routes.RunPayroll(); } },
+        new Command() { public void command() { routes = Utils.undo(stack); } },
+        new Command() { public void command() { routes.changePaymentSchedule(); } },
+        new Command() { public void command() { routes.addPaymentSchedule(); } },
+        new Command() { public void command() { routes.printEmployees(); } },
+        new Command() { public void command() { routes.createEmployee(); } }
+    };
+
     public void run() {
         Utils.clearScreen();
-        Company company = new Company();
-        Stack<String> stack = new Stack<String>();
-
         while (true) {
-            int command = Utils.readCommand();
-            boolean can_quit = false;
-
-            if (command != 8 && command <= 10) {
-                Utils.addCompany(stack, company);
-            }
-
-            switch (command) {
-                case 0:
-                    Utils.printHelp();
-                    break;
-                case 1:
-                    company.createEmployee();
-                    break;
-                case 2:
-                    company.removeEmployee();
-                    break;
-                case 3:
-                    company.throwTimeCard();
-                    break;
-                case 4:
-                    company.addSale();
-                    break;
-                case 5:
-                    company.addServiceCharge();
-                    break;
-                case 6:
-                    company.editEmployee();
-                    break;
-                case 7:
-                    company.RunPayroll();
-                    break;
-                case 8:
-                    company = Utils.undo(stack);
-                    break;
-                case 9:
-                    company.changePaymentSchedule();
-                    break;
-                case 10:
-                    company.addPaymentSchedule();
-                    break;
-                case 11:
-                    company.printEmployees();
-                    break;
-                case 12:
-                    System.out.println("Saindo...\n");
-                    can_quit = true;
-                    break;
-                default:
-                    System.out.println("Comando não disponivel\n");
-                    break;
-            }
-            if (can_quit) {
+            int index = Utils.readCommand();
+            if (index < commands.length) {
+                if (index != 8 && index != 0 && index <= 10) {
+                    Utils.addCompany(stack, routes);
+                }
+                commands[index].command();
+            } else if (index == commands.length) {
+                System.out.println("Saindo...\n");
                 break;
+            } else {
+                System.out.println("Comando não disponivel\n");
             }
         }
     }
