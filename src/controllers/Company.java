@@ -1,31 +1,23 @@
 package src.controllers;
 
-import src.models.employee.Hourly;
-import src.models.employee.Salaried;
-import src.models.employee.Comissioned;
-import src.models.employee.Employee;
-import src.models.syndicate.SyndicateEmployee;
-import src.models.syndicate.Syndicate;
+import src.models.employee.*;
+import src.models.syndicate.*;
 import src.models.payment.Schedule;
 import src.utils.Utils;
+import java.util.Calendar;
+import java.util.Map;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.HashSet;
 
 public class Company implements Serializable {
     public HashMap<Integer, Employee> employees;
-    public HashMap<Integer, Hourly> hourly;
-    public HashMap<Integer, Salaried> salaried;
-    public HashMap<Integer, Comissioned> comissioned;
     public HashSet<String> payment_schedules;
     public Syndicate syndicate;
     public int current_id;
 
     public Company() {
         this.employees = new HashMap<>();
-        this.hourly = new HashMap<>();
-        this.salaried = new HashMap<>();
-        this.comissioned = new HashMap<>();
         this.payment_schedules = new HashSet<>();
         this.syndicate = new Syndicate();
         this.current_id = 0;
@@ -45,26 +37,26 @@ public class Company implements Serializable {
         can_create &= employee.setSyndicate(syndicate, Utils.readFromSyndicate());
         can_create &= employee.setPaymentType(Utils.readPaymentType());
         can_create &= employee.setSalary(Utils.readSalary());
-    
+
         if (!can_create) {
             return false;
         }
-        
+
         switch (employee.getType()) {
             case 1:
                 Hourly hourly_employee = new Hourly();
                 hourly_employee.copyEmployee(employee);
-                this.hourly.put(hourly_employee.id, hourly_employee);
+                employee = hourly_employee;
                 break;
             case 2:
                 Salaried salaried_employee = new Salaried();
                 salaried_employee.copyEmployee(employee);
-                this.salaried.put(salaried_employee.id, salaried_employee);
+                employee = salaried_employee;
                 break;
             case 3:
                 Comissioned comissioned_employee = new Comissioned();
                 comissioned_employee.copyEmployee(employee);
-                this.comissioned.put(comissioned_employee.id, comissioned_employee);
+                employee = comissioned_employee;
                 break;
         }
 
@@ -79,18 +71,19 @@ public class Company implements Serializable {
         }
 
         Employee employee = this.employees.get(id);
-
-        this.hourly.remove(id);
-        this.salaried.remove(id);
-        this.comissioned.remove(id);
         this.syndicate.removeSyndicateEmployee(employee.getSyndicateEmployeeId());
         this.employees.remove(id);
         return true;
     }
 
-    public boolean throwTimeCard() {
-        int id = Utils.readId();
+    public boolean editEmployee(int id) {
+        if (!this.employees.containsKey(id)) {
+            return false;
+        }
+        return readEmployee(id);
+    }
 
+    public boolean throwTimeCard(int id) {
         if (!this.employees.containsKey(id)) {
             return false;
         }
@@ -101,7 +94,7 @@ public class Company implements Serializable {
             return false;
         }
 
-        Hourly hourly_employee = this.hourly.get(id);
+        Hourly hourly_employee = (Hourly) this.employees.get(id);
         int hours = Utils.readHours();
 
         if (!hourly_employee.addHours(hours)) {
@@ -111,9 +104,7 @@ public class Company implements Serializable {
         return true;
     }
 
-    public boolean createSale() {
-        int id = Utils.readId();
-
+    public boolean createSale(int id) {
         if (!this.employees.containsKey(id)) {
             return false;
         }
@@ -126,7 +117,7 @@ public class Company implements Serializable {
 
         double value = Utils.readSale();
         double percentage = Utils.readPercentage();
-        Comissioned comissioned_employee = this.comissioned.get(id);
+        Comissioned comissioned_employee = (Comissioned) this.employees.get(id);
 
         if (!comissioned_employee.addComission(value, percentage)) {
             return false;
@@ -135,9 +126,7 @@ public class Company implements Serializable {
         return true;
     }
 
-    public boolean createServiceCharge() {
-        int id = Utils.readId();
-
+    public boolean createServiceCharge(int id) {
         if (!this.syndicate.syndicate_employees.containsKey(id)) {
             return false;
         }
@@ -152,13 +141,11 @@ public class Company implements Serializable {
         return true;
     }
 
-    public boolean editPaymentSchedule() {
-        int id = Utils.readId();
+    public boolean editPaymentSchedule(int id) {
         Schedule payment_schedule = Utils.readPaymentSchedule();
 
-        if (!this.syndicate.syndicate_employees.containsKey(id)) {
-            return false;
-        } else if (!this.payment_schedules.contains(payment_schedule.toString())) {
+        if (!this.syndicate.syndicate_employees.containsKey(id)
+                || !this.payment_schedules.contains(payment_schedule.toString())) {
             return false;
         }
 
@@ -175,6 +162,53 @@ public class Company implements Serializable {
         }
 
         payment_schedules.add(payment_schedule.toString());
+        return true;
+    }
+
+    public void printEmployees() {
+        if (this.employees.size() == 0) {
+            System.out.println("Não há nenhum empregado no sistema");
+            return;
+        }
+        for (Map.Entry<Integer, Employee> e : this.employees.entrySet()) {
+            Employee employee = e.getValue();
+            employee.printEmployee();
+            System.out.println("");
+        }
+    }
+
+    public boolean RunPayroll() {
+        Calendar current_date = Utils.readDate();
+
+        for (Map.Entry<Integer, Employee> e : this.employees.entrySet()) {
+            Employee employee = e.getValue();
+            Schedule payment_schedule = employee.getPaymentSchedule();
+
+            if (payment_schedule.getTimeGap() == 0) {
+                int day = payment_schedule.getDay();
+
+                if (day == 50 && Utils.LastBussinessDay(current_date)
+                        && Utils.dateDiff(employee.getLastPayment(), current_date) > 0) {
+
+                    employee.payEmployee(current_date, syndicate);
+
+                } else if (current_date.get(Calendar.DATE) == day
+                        && Utils.dateDiff(employee.getLastPayment(), current_date) > 0) {
+
+                    employee.payEmployee(current_date, syndicate);
+                }
+
+            } else if (payment_schedule.getTimeGap() == 1) {
+                int need = payment_schedule.getDay() * 7;
+                int week_day = payment_schedule.getWeekDay();
+
+                if (current_date.get(Calendar.DAY_OF_WEEK) == week_day
+                        && Utils.dateDiff(employee.getLastPayment(), current_date) >= need) {
+
+                    employee.payEmployee(current_date, syndicate);
+                }
+            }
+        }
         return true;
     }
 }

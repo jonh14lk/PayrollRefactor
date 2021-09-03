@@ -5,7 +5,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ObjectInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectOutputStream;
-import src.controllers.Routes;
+import src.controllers.Company;
 import src.models.payment.Schedule;
 import java.util.Stack;
 import java.util.Calendar;
@@ -151,7 +151,7 @@ public class Utils {
         return payment_schedule;
     }
 
-    public static void printHelp() {
+    public static boolean printHelp() {
         System.out.println("[0] - Ajuda");
         System.out.println("[1] - Adicionar empregado");
         System.out.println("[2] - Remoção de um empregado");
@@ -164,7 +164,8 @@ public class Utils {
         System.out.println("[9] - Mudar agenda de pagamento");
         System.out.println("[10] - Adicionar agenda de pagamento");
         System.out.println("[11] - Exibir empregados");
-        System.out.println("[12] - Sair da aplicação\n");
+        System.out.println("[12] - Sair da aplicação");
+        return true;
     }
 
     public static void clearScreen() {
@@ -211,11 +212,11 @@ public class Utils {
         return (month != new_month);
     }
 
-    public static void addCompany(Stack<String> stack, Routes routes) {
+    public static void addCompany(Stack<String> stack, Company company) {
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             ObjectOutputStream oos = new ObjectOutputStream(baos);
-            oos.writeObject(routes);
+            oos.writeObject(company);
             oos.close();
             baos.close();
             String to_store = Base64.getEncoder().encodeToString(baos.toByteArray());
@@ -225,9 +226,8 @@ public class Utils {
         }
     }
 
-    public static Routes undo(Stack<String> stack) {
+    public static Company undo(Stack<String> stack) {
         if (stack.empty()) {
-            System.out.println("Operação não pode ser realizada");
             return null;
         }
 
@@ -238,8 +238,7 @@ public class Utils {
             byte[] decoded = Base64.getDecoder().decode(stored);
             ByteArrayInputStream bais = new ByteArrayInputStream(decoded);
             ObjectInputStream ois = new ObjectInputStream(bais);
-            System.out.println("Undo realizado com sucesso");
-            return (Routes) ois.readObject();
+            return (Company) ois.readObject();
         } catch (Exception exception) {
             System.out.println("Erro ao deserializar");
             return null;

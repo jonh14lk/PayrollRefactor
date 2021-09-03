@@ -149,17 +149,17 @@ public class Employee implements Serializable {
         return this.commissioned;
     }
 
-    public void copyEmployee(Employee e) { // I will change this later
+    public void copyEmployee(Employee e) {
         this.name = e.name;
         this.address = e.address;
         this.id = e.id;
+        this.type = e.type;
         this.hourly = e.hourly;
-        this.salaried = e.salaried;  
+        this.salaried = e.salaried;
         this.commissioned = e.commissioned;
         this.from_syndicate = e.from_syndicate;
         this.syndicate_employee_id = e.syndicate_employee_id;
         this.payment_type = e.payment_type;
-        this.payment_schedule = e.payment_schedule;
         this.salary = e.salary;
         this.last_payment = e.last_payment;
     }

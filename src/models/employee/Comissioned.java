@@ -1,7 +1,6 @@
 package src.models.employee;
 
-import src.models.syndicate.Syndicate;
-import src.models.syndicate.SyndicateEmployee;
+import src.models.syndicate.*;
 import java.util.Calendar;
 
 public class Comissioned extends Salaried {

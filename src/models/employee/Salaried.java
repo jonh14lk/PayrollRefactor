@@ -36,6 +36,6 @@ public class Salaried extends Employee {
 
     @Override
     public void printEmployee() {
-        System.out.println("Tipo: Assalariado" + this.toString());
+        System.out.println("Tipo: Assalariado" + "\n" + this.toString());
     }
 }

@@ -1,48 +1,31 @@
 package src.app;
 
-import src.controllers.Routes;
+import src.controllers.Company;
+import src.controllers.RouteExecution;
 import src.utils.Utils;
 import java.util.Stack;
 
 public class App {
-    Routes routes;
-    Stack<String> stack;
+    public Company company;
+    public RouteExecution route_execution;
+    public Stack<String> stack;
 
     public App() {
-        routes = new Routes();
+        company = new Company();
         stack = new Stack<String>();
+        route_execution = new RouteExecution(company, stack);
     }
-
-    interface Command {
-        void command();
-    }
-
-    private Command[] commands = new Command[] {
-        new Command() { public void command() { Utils.printHelp(); } },
-        new Command() { public void command() { routes.createEmployee(); } },
-        new Command() { public void command() { routes.removeEmployee(); } },
-        new Command() { public void command() { routes.addTimeCard(); } },
-        new Command() { public void command() { routes.addSale(); } },
-        new Command() { public void command() { routes.addServiceCharge(); } },
-        new Command() { public void command() { routes.editEmployee(); } },
-        new Command() { public void command() { routes.RunPayroll(); } },
-        new Command() { public void command() { routes = Utils.undo(stack); } },
-        new Command() { public void command() { routes.changePaymentSchedule(); } },
-        new Command() { public void command() { routes.addPaymentSchedule(); } },
-        new Command() { public void command() { routes.printEmployees(); } },
-        new Command() { public void command() { routes.createEmployee(); } }
-    };
 
     public void run() {
         Utils.clearScreen();
         while (true) {
             int index = Utils.readCommand();
-            if (index < commands.length) {
-                if (index != 8 && index != 0 && index <= 10) {
-                    Utils.addCompany(stack, routes);
+            if (index < route_execution.size()) {
+                if (route_execution.canPush(index)) {
+                    Utils.addCompany(stack, company);
                 }
-                commands[index].command();
-            } else if (index == commands.length) {
+                route_execution.executeRoute(index);
+            } else if (index == route_execution.size()) {
                 System.out.println("Saindo...\n");
                 break;
             } else {
