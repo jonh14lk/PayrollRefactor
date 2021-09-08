@@ -1,11 +1,11 @@
 package src.controllers.routes;
 
 import src.controllers.Route;
-import src.memento.Memento;
+import src.controllers.state.State;
 import src.utils.Utils;
 
 public class RemoveEmployee implements Route {
-    public boolean execute(Memento memento) {
-        return memento.company.eraseEmployee(Utils.readId());
+    public boolean execute(State state) {
+        return state.company.eraseEmployee(Utils.readId());
     }
 }

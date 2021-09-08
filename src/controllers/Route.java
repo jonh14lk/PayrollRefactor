@@ -1,7 +1,7 @@
 package src.controllers;
 
-import src.memento.Memento;
+import src.controllers.state.State;
 
 public interface Route {
-    boolean execute(Memento memento);
+    boolean execute(State state);
 }

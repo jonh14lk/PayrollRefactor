@@ -1,4 +1,4 @@
-package src.memento;
+package src.controllers.state;
 
 import src.controllers.company.Company;
 import java.util.Base64;
@@ -8,11 +8,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.ObjectOutputStream;
 import java.util.Stack;
 
-public class Memento {
+public class State {
     public Company company;
     public Stack<String> stack;
 
-    public Memento() {
+    public State() {
         this.company = new Company();
         this.stack = new Stack<String>();
     }
