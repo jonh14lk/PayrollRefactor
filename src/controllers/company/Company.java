@@ -1,4 +1,4 @@
-package src.controllers;
+package src.controllers.company;
 
 import src.models.employee.*;
 import src.models.syndicate.*;

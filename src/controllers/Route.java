@@ -1,5 +1,7 @@
 package src.controllers;
 
+import src.memento.Memento;
+
 public interface Route {
-    boolean execute();
+    boolean execute(Memento memento);
 }

@@ -1,13 +1,6 @@
 package src.utils;
 
-import java.util.Base64;
-import java.io.ByteArrayInputStream;
-import java.io.ObjectInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.ObjectOutputStream;
-import src.controllers.Company;
 import src.models.payment.Schedule;
-import java.util.Stack;
 import java.util.Calendar;
 import java.util.Scanner;
 
@@ -210,38 +203,5 @@ public class Utils {
         int new_month = a.get(Calendar.MONTH);
         a.add(Calendar.DAY_OF_MONTH, -added);
         return (month != new_month);
-    }
-
-    public static void addCompany(Stack<String> stack, Company company) {
-        try {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            ObjectOutputStream oos = new ObjectOutputStream(baos);
-            oos.writeObject(company);
-            oos.close();
-            baos.close();
-            String to_store = Base64.getEncoder().encodeToString(baos.toByteArray());
-            stack.push(to_store);
-        } catch (Exception exception) {
-            System.out.println("Erro ao serializar");
-        }
-    }
-
-    public static Company undo(Stack<String> stack) {
-        if (stack.empty()) {
-            return null;
-        }
-
-        String stored = stack.peek();
-        stack.pop();
-
-        try {
-            byte[] decoded = Base64.getDecoder().decode(stored);
-            ByteArrayInputStream bais = new ByteArrayInputStream(decoded);
-            ObjectInputStream ois = new ObjectInputStream(bais);
-            return (Company) ois.readObject();
-        } catch (Exception exception) {
-            System.out.println("Erro ao deserializar");
-            return null;
-        }
     }
 }

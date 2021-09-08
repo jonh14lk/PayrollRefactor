@@ -1,33 +1,41 @@
 package src.controllers;
 
+import src.memento.Memento;
 import src.controllers.routes.*;
-import java.util.Stack;
 
-public class RouteExecution {
+public class RouteExecution extends Memento {
     public Route[] routes;
 
-    public RouteExecution(Company company, Stack<String> stack) {
-        routes = new Route[] {
+    public RouteExecution() {
+        super();
+        this.routes = new Route[] {
             new PrintHelp(),
-            new AddEmployee(company),
-            new RemoveEmployee(company),
-            new AddTimeCard(company),
-            new AddSale(company),
-            new AddServiceCharge(company),
-            new EditEmployee(company),
-            new RunPayroll(company),
-            new Undo(company, stack),
-            new ChangePaymentSchedule(company),
-            new CreatePaymentSchedule(company),
-            new PrintEmployees(company)
+            new AddEmployee(),
+            new RemoveEmployee(),
+            new AddTimeCard(),
+            new AddSale(),
+            new AddServiceCharge(),
+            new EditEmployee(),
+            new RunPayroll(),
+            new Undo(),
+            new ChangePaymentSchedule(),
+            new CreatePaymentSchedule(),
+            new PrintEmployees()
         };
     }
 
     public void executeRoute(int index) {
-        if (routes[index].execute()) {
-            operationSuccessful();
+        this.pushState(index);
+        if (this.routes[index].execute(this)) {
+            this.operationSuccessful();
         } else {
-            operationFailed();
+            this.operationFailed();
+        }
+    }
+
+    public void pushState(int index) {
+        if(this.canPush(index)) {
+            this.backup();
         }
     }
 

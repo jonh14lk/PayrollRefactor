@@ -1,16 +1,10 @@
 package src.controllers.routes;
 
 import src.controllers.Route;
-import src.controllers.Company;
+import src.memento.Memento;
 
 public class AddEmployee implements Route {
-    public Company company;
-
-    public AddEmployee(Company company) {
-        this.company = company;
-    }
-
-    public boolean execute() {
-        return company.readEmployee(++company.current_id);
+    public boolean execute(Memento memento) {
+        return memento.company.readEmployee(++memento.company.current_id);
     }
 }
