@@ -446,6 +446,32 @@ public boolean editEmployee(int id) {
 
 </details>
 
+<details>
+<summary>Classe AddEmployee</summary>
+
+```c
+public class AddEmployee implements Route {
+    public boolean execute(State state) {
+        return state.company.readEmployee(++state.company.current_id);
+    }
+}
+```
+
+</details>
+
+<details>
+<summary>Classe EditEmployee</summary>
+
+```c
+public class EditEmployee implements Route {
+    public boolean execute(State state) {
+        return state.company.editEmployee(Utils.readId());
+    }
+}
+```
+
+</details>
+
 ## Move Accumulation to Collecting Parameter
 
 ### Antes:
@@ -616,32 +642,6 @@ public void printEmployee() {
 @Override
 public void printEmployee() {
     System.out.println("Tipo: Comissionado" + "\n" + this.toString());
-}
-```
-
-</details>
-
-<details>
-<summary>Classe AddEmployee</summary>
-
-```c
-public class AddEmployee implements Route {
-    public boolean execute(State state) {
-        return state.company.readEmployee(++state.company.current_id);
-    }
-}
-```
-
-</details>
-
-<details>
-<summary>Classe EditEmployee</summary>
-
-```c
-public class EditEmployee implements Route {
-    public boolean execute(State state) {
-        return state.company.editEmployee(Utils.readId());
-    }
 }
 ```
 
