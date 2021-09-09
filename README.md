@@ -446,6 +446,181 @@ public boolean editEmployee(int id) {
 
 </details>
 
+## Move Accumulation to Collecting Parameter
+
+### Antes:
+
+Inicialmente, haviam vários métodos printEmployee, com muita repetição de
+código, nas classes Employee, Hourly, Salaried e Comissioned.
+
+<details>
+<summary>Classe Employee</summary>
+
+```c
+public void printEmployee() {
+    System.out.println("Nome: " + this.name);
+    System.out.println("Endereço: " + this.address);
+    System.out.println("Id: " + this.id);
+}
+```
+
+</details>
+
+<details>
+<summary>Classe Hourly</summary>
+
+```c
+@Override
+public void printEmployee() {
+    System.out.println("Nome: " + this.name);
+    System.out.println("Endereço: " + this.address);
+    System.out.println("Id: " + this.id);
+    System.out.println("Tipo: Horista");
+    System.out.println("Salário por hora: " + this.getSalary());
+    System.out.println("Forma de pagamento: " + this.getPaymentType());
+    System.out.println("Agenda de pagamento: " + this.getPaymentSchedule().toString());
+    if (getSyndicate()) {
+        System.out.println("Id do funcionario no sindicato: " + getSyndicateEmployeeId());
+    }
+}
+```
+
+</details>
+
+<details>
+<summary>Classe Salaried</summary>
+
+```c
+@Override
+public void printEmployee() {
+    System.out.println("Nome: " + this.name);
+    System.out.println("Endereço: " + this.address);
+    System.out.println("Id: " + this.id);
+    System.out.println("Tipo: Assalariado");
+    System.out.println("Salário: " + this.getSalary());
+    System.out.println("Forma de pagamento: " + this.getPaymentType());
+    System.out.println("Agenda de pagamento: " + this.getPaymentSchedule().toString());
+    if (getSyndicate()) {
+        System.out.println("Id do funcionario no sindicato: " + getSyndicateEmployeeId());
+    }
+}
+```
+
+</details>
+
+<details>
+<summary>Classe Comissioned</summary>
+
+```c
+@Override
+public void printEmployee() {
+    System.out.println("Nome: " + this.name);
+    System.out.println("Endereço: " + this.address);
+    System.out.println("Id: " + this.id);
+    System.out.println("Tipo: Comissionado");
+    System.out.println("Salário: " + this.getSalary());
+    System.out.println("Forma de pagamento: " + this.getPaymentType());
+    System.out.println("Agenda de pagamento: " + this.getPaymentSchedule().toString());
+    if (getSyndicate()) {
+        System.out.println("Id do funcionario no sindicato: " + this.getSyndicateEmployeeId());
+    }
+}
+```
+
+</details>
+
+### Depois:
+
+Aplicando o padrão, foi possível "quebrar" o método toString da classe Employee
+em vários outros métodos, simplificando consideravelmente os códigos dos
+métodos printEmployee nas classes filhas, além disso, métodos que imprimiam
+apenas algumas características de um employee foram simplificados após a aplicação
+do padrão.
+
+<details>
+<summary>Classe Employee</summary>
+
+```c
+public void printEmployee() {
+    System.out.println(this.toString());
+}
+
+public String idToString() {
+    return "Id: " + this.id;
+}
+
+public String nameToString() {
+    return "Nome: " + this.name;
+}
+
+public String addressToString() {
+    return "Endereço: " + this.address;
+}
+
+public String syndicateToString() {
+    if (this.getSyndicate()) {
+        return "Id do funcionario no sindicato: " + getSyndicateEmployeeId();
+    }
+    return "Não pertence ao sindicato";
+}
+
+public String salaryToString() {
+    return "Salário: " + this.getSalary();
+}
+
+public String paymentTypeToString() {
+    return "Forma de pagamento: " + this.getPaymentType();
+}
+
+public String paymentScheduleToString() {
+    return "Agenda de pagamento: " + this.getPaymentSchedule().toString();
+}
+
+public String toString() {
+    return this.nameToString() + "\n" + this.addressToString() + "\n" + this.idToString() + "\n"
+            + this.syndicateToString() + "\n" + this.salaryToString() + "\n" + this.paymentTypeToString() + "\n"
+            + this.paymentScheduleToString();
+}
+```
+
+</details>
+
+<details>
+<summary>Classe Hourly</summary>
+
+```c
+@Override
+public void printEmployee() {
+    System.out.println("Tipo: Horista" + "\n" + this.toString());
+}
+```
+
+</details>
+
+<details>
+<summary>Classe Salaried</summary>
+
+```c
+@Override
+public void printEmployee() {
+    System.out.println("Tipo: Assalariado" + "\n" + this.toString());
+}
+```
+
+</details>
+
+<details>
+<summary>Classe Comissioned</summary>
+
+```c
+@Override
+public void printEmployee() {
+    System.out.println("Tipo: Comissionado" + "\n" + this.toString());
+}
+```
+
+</details>
+
 <details>
 <summary>Classe AddEmployee</summary>
 
@@ -467,6 +642,136 @@ public class EditEmployee implements Route {
     public boolean execute(State state) {
         return state.company.editEmployee(Utils.readId());
     }
+}
+```
+
+</details>
+
+## Eliminando long parameter list em construtores
+
+### Antes:
+
+Inicialmente, muitos parâmetros eram passado entre os construtores das classes Employee, Hourly,
+Salaried e Comissioned, muitos deles repetidos várias vezes.
+
+<details>
+<summary>Classe Employee</summary>
+
+```c
+public Employee(String name, String address, int id, int type, int from_syndicate, Syndicate syndicate,
+        int payment_type, double salary, String payment_schedule) {
+    this.name = name;
+    this.address = address;
+    this.id = id;
+    this.setPaymentSchedule(payment_schedule);
+    this.setSalary(salary);
+    this.setType(type);
+    this.setPaymentType(payment_type);
+    this.setLastPayment(1, 1, 2021);
+    if (from_syndicate == 1) {
+        setSyndicate(syndicate);
+    }
+}
+```
+
+</details>
+
+<details>
+<summary>Classe Hourly</summary>
+
+```c
+public Hourly(String name, String address, int id, int type, int from_syndicate, Syndicate syndicate, double salary,
+        int payment_type) {
+    super(name, address, id, type, from_syndicate, syndicate, payment_type, salary, "semanal 1 sexta");
+    this.hours = 0;
+    this.extra_hours = 0;
+}
+```
+
+</details>
+
+<details>
+<summary>Classe Salaried</summary>
+
+```c
+public Salaried(String name, String address, int id, int type, int from_syndicate, Syndicate syndicate,
+        double salary, int payment_type) {
+    super(name, address, id, type, from_syndicate, syndicate, payment_type, salary, "mensal $");
+}
+```
+
+</details>
+
+<details>
+<summary>Classe Comissioned</summary>
+
+```c
+public Comissioned(String name, String address, int id, int type, int from_syndicate, Syndicate syndicate,
+        double salary, int payment_type) {
+    super(name, address, id, type, from_syndicate, syndicate, salary, payment_type);
+    this.setPaymentSchedule("semanal 2 sexta");
+    this.comission = 0.0;
+}
+```
+
+</details>
+
+### Depois:
+
+Após a mudança, os construtores das classes passaram a ter uma função de "inicializar" os
+atributos necessários, para que assim, os métodos que precisam alterar os atributos consigam
+alterar em sequência.
+
+<details>
+<summary>Classe Employee</summary>
+
+```c
+public Employee() {
+    this.name = new String();
+    this.address = new String();
+    this.id = -1;
+    this.setPaymentSchedule("mensal $");
+    this.setSalary(0.0);
+    this.setType(1);
+    this.setPaymentType(1);
+    this.setLastPayment(1, 1, 2021);
+    this.setSyndicate(null, 0);
+}
+```
+
+</details>
+
+<details>
+<summary>Classe Hourly</summary>
+
+```c
+public Hourly() {
+    this.hours = 0;
+    this.extra_hours = 0;
+    this.setPaymentSchedule("semanal 1 sexta");
+}
+```
+
+</details>
+
+<details>
+<summary>Classe Salaried</summary>
+
+```c
+public Salaried() {
+    this.setPaymentSchedule("mensal $");
+}
+```
+
+</details>
+
+<details>
+<summary>Classe Salaried</summary>
+
+```c
+public Comissioned() {
+    this.comission = 0.0;
+    this.setPaymentSchedule("semanal 2 sexta");
 }
 ```
 
