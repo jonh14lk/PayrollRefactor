@@ -114,7 +114,6 @@ while (true) {
 ```
 
 </details>
-<br>
 
 ### Depois:
 
@@ -175,7 +174,6 @@ public void executeRoute(int index) {
 ```
 
 </details>
-<br>
 
 ## Memento
 
@@ -209,7 +207,6 @@ while (true) {
 ```
 
 </details>
-<br>
 
 ### Depois:
 
@@ -264,7 +261,6 @@ public class RouteExecution extends State {
 ```
 
 </details>
-<br>
 
 ## Extract Method
 
@@ -392,7 +388,6 @@ public boolean editEmployee() {
 ```
 
 </details>
-<br>
 
 ### Depois:
 
