@@ -17,7 +17,7 @@ public class RouteExecution extends State {
             new AddServiceCharge(),
             new EditEmployee(),
             new RunPayroll(),
-            new Undo(),
+            new UndoRedo(),
             new ChangePaymentSchedule(),
             new CreatePaymentSchedule(),
             new PrintEmployees()
@@ -35,7 +35,7 @@ public class RouteExecution extends State {
 
     public void pushState(int index) {
         if(this.canPush(index)) {
-            this.backup();
+            this.save(this.undo_stack);
         }
     }
 

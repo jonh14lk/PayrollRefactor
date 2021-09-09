@@ -10,14 +10,26 @@ import java.util.Stack;
 
 public class State {
     public Company company;
-    public Stack<String> stack;
+    public Stack<String> undo_stack;
+    public Stack<String> redo_stack;
 
     public State() {
         this.company = new Company();
-        this.stack = new Stack<String>();
+        this.undo_stack = new Stack<String>();
+        this.redo_stack = new Stack<String>();
     }
 
-    public void backup() {
+    public boolean undo() {
+        this.save(this.redo_stack);
+        return this.restore(this.undo_stack);
+    }
+
+    public boolean redo() {
+        this.save(this.undo_stack);
+        return this.restore(this.redo_stack);
+    }
+
+    public void save(Stack<String> stack) {
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             ObjectOutputStream oos = new ObjectOutputStream(baos);
@@ -25,19 +37,19 @@ public class State {
             oos.close();
             baos.close();
             String to_store = Base64.getEncoder().encodeToString(baos.toByteArray());
-            this.stack.push(to_store);
+            stack.push(to_store);
         } catch (Exception exception) {
             System.out.println("Erro ao serializar");
         }
     }
 
-    public boolean restore() {
-        if (this.stack.empty()) {
+    public boolean restore(Stack<String> stack) {
+        if (stack.empty()) {
             return false;
         }
 
-        String stored = this.stack.peek();
-        this.stack.pop();
+        String stored = stack.peek();
+        stack.pop();
 
         try {
             byte[] decoded = Base64.getDecoder().decode(stored);

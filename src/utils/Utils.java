@@ -27,20 +27,17 @@ public class Utils {
     public static int readCommand() {
         System.out.println("\nPara obter uma lista com os comandos, digite 0");
         System.out.println("Digite um comando:\n");
-        int command = readInt();
-        return command;
+        return readInt();
     }
 
     public static String readName() {
         System.out.println("Nome do funcionario:");
-        String name = readString();
-        return name;
+        return readString();
     }
 
     public static String readAddress() {
         System.out.println("Endereço do funcionario:");
-        String address = readString();
-        return address;
+        return readString();
     }
 
     public static int readEmployeeType() {
@@ -48,52 +45,44 @@ public class Utils {
         System.out.println("[1] - Horista");
         System.out.println("[2] - Assalariado");
         System.out.println("[3] - Comissionado");
-        int type = readInt();
-        return type;
+        return readInt();
     }
 
     public static int readFromSyndicate() {
         System.out.println("O funcionário pertence ao sindicato?");
         System.out.println("[0] - Não");
         System.out.println("[1] - Sim");
-        int from_syndicate = readInt();
-        return from_syndicate;
+        return readInt();
     }
 
     public static int readId() {
         System.out.println("Id do funcionario:");
-        int id = readInt();
-        return id;
+        return readInt();
     }
 
     public static int readHours() {
         System.out.println("Digite a quantidade de horas trabalhadas:");
-        int hours = readInt();
-        return hours;
+        return readInt();
     }
 
     public static double readSale() {
         System.out.println("Digite o valor da venda:");
-        double value = readDouble();
-        return value;
+        return readDouble();
     }
 
     public static double readPercentage() {
         System.out.println("Digite o percentual destinado ao funcionario:");
-        double percentage = readDouble();
-        return percentage;
+        return readDouble();
     }
 
     public static double readServiceCharge() {
         System.out.println("Digite o valor da taxa de serviço:");
-        double charge = readDouble();
-        return charge;
+        return readDouble();
     }
 
     public static double readSalary() {
         System.out.println("Digite o salario do funcionário:");
-        double salary = readDouble();
-        return salary;
+        return readDouble();
     }
 
     public static int readPaymentType() {
@@ -101,8 +90,13 @@ public class Utils {
         System.out.println("[1] - Cheque pelos correios");
         System.out.println("[2] - Cheque em mãos");
         System.out.println("[3] - Depósito em conta bancária");
-        int type = readInt();
-        return type;
+        return readInt();
+    }
+
+    public static int readUndoRedo() {
+        System.out.println("[0] - Undo");
+        System.out.println("[1] - Redo");
+        return readInt();
     }
 
     public static Calendar readDate() {
