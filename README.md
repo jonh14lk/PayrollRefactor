@@ -210,22 +210,21 @@ while (true) {
 
 ### Depois:
 
-Aplicando o padrão, foi criada a classe State, que é responsável por guardar os diferentes
-estados da classe Company em duas stacks para o Undo e o Redo respectivamente. Com a criação da
-classe foi possível evitar repetição de trechos de códigos que seriam praticamente iguais para o
-Undo e o Redo, além de ter sido usada hierarquia na classe RouteExecution, facilitando consideravelmente
+Aplicando o padrão, foi criada a classe Memento, que é responsável por guardar os diferentes
+estados da classe Company em duas stacks para o Undo e o Redo respectivamente, junto com a classe
+MementoCompany. Com a criação das classes foi possível evitar repetição de trechos de códigos que seriam praticamente iguais para o
+Undo e o Redo, além de ter sido usada hierarquia nas classes RouteExecution e Memento, facilitando consideravelmente
 o desenvolvimento do código para a execução de operações.
 
 <details>
-<summary>Classe State</summary>
+<summary>Classe Memento</summary>
 
 ```c
-public Company company;
 public Stack<String> undo_stack;
 public Stack<String> redo_stack;
 
-public State() {
-    this.company = new Company();
+public Memento() {
+    super();
     this.undo_stack = new Stack<String>();
     this.redo_stack = new Stack<String>();
 }
@@ -244,10 +243,57 @@ public boolean redo() {
 </details>
 
 <details>
+<summary>Classe MementoCompany</summary>
+
+```c
+public Company company;
+
+public MementoCompany() {
+    this.company = new Company();
+}
+
+public void save(Stack<String> stack) {
+    try {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ObjectOutputStream oos = new ObjectOutputStream(baos);
+        oos.writeObject(this.company);
+        oos.close();
+        baos.close();
+        String to_store = Base64.getEncoder().encodeToString(baos.toByteArray());
+        stack.push(to_store);
+    } catch (Exception exception) {
+        System.out.println("Erro ao serializar");
+    }
+}
+
+public boolean restore(Stack<String> stack) {
+    if (stack.empty()) {
+        return false;
+    }
+
+    String stored = stack.peek();
+    stack.pop();
+
+    try {
+        byte[] decoded = Base64.getDecoder().decode(stored);
+        ByteArrayInputStream bais = new ByteArrayInputStream(decoded);
+        ObjectInputStream ois = new ObjectInputStream(bais);
+        company = (Company) ois.readObject();
+        return true;
+    } catch (Exception exception) {
+        System.out.println("Erro ao deserializar");
+        return false;
+    }
+}
+```
+
+</details>
+
+<details>
 <summary>Classe RoutesExecution</summary>
 
 ```c
-public class RouteExecution extends State {
+public class RouteExecution extends Memento {
     ...
 
     public void pushState(int index) {
@@ -451,8 +497,8 @@ public boolean editEmployee(int id) {
 
 ```c
 public class AddEmployee implements Route {
-    public boolean execute(State state) {
-        return state.company.readEmployee(++state.company.current_id);
+    public boolean execute(Memento memento) {
+        return memento.company.readEmployee(++memento.company.current_id);
     }
 }
 ```
@@ -464,8 +510,8 @@ public class AddEmployee implements Route {
 
 ```c
 public class EditEmployee implements Route {
-    public boolean execute(State state) {
-        return state.company.editEmployee(Utils.readId());
+    public boolean execute(Memento memento) {
+        return memento.company.editEmployee(Utils.readId());
     }
 }
 ```

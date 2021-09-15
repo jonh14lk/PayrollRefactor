@@ -1,10 +1,10 @@
 package src.controllers.routes;
 
 import src.controllers.Route;
-import src.controllers.state.State;
+import src.controllers.memento.Memento;
 
 public class CreatePaymentSchedule implements Route {
-    public boolean execute(State state) {
-        return state.company.createPaymentSchedule();
+    public boolean execute(Memento memento) {
+        return memento.company.createPaymentSchedule();
     }
 }

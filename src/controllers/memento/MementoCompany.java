@@ -1,4 +1,4 @@
-package src.controllers.state;
+package src.controllers.memento;
 
 import src.controllers.company.Company;
 import java.util.Base64;
@@ -8,25 +8,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.ObjectOutputStream;
 import java.util.Stack;
 
-public class State {
+public class MementoCompany {
     public Company company;
-    public Stack<String> undo_stack;
-    public Stack<String> redo_stack;
 
-    public State() {
+    public MementoCompany() {
         this.company = new Company();
-        this.undo_stack = new Stack<String>();
-        this.redo_stack = new Stack<String>();
-    }
-
-    public boolean undo() {
-        this.save(this.redo_stack);
-        return this.restore(this.undo_stack);
-    }
-
-    public boolean redo() {
-        this.save(this.undo_stack);
-        return this.restore(this.redo_stack);
     }
 
     public void save(Stack<String> stack) {
@@ -55,7 +41,7 @@ public class State {
             byte[] decoded = Base64.getDecoder().decode(stored);
             ByteArrayInputStream bais = new ByteArrayInputStream(decoded);
             ObjectInputStream ois = new ObjectInputStream(bais);
-            company = (Company)ois.readObject();
+            company = (Company) ois.readObject();
             return true;
         } catch (Exception exception) {
             System.out.println("Erro ao deserializar");

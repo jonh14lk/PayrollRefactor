@@ -1,9 +1,9 @@
 package src.controllers;
 
+import src.controllers.memento.Memento;
 import src.controllers.routes.*;
-import src.controllers.state.State;
 
-public class RouteExecution extends State {
+public class RouteExecution extends Memento {
     public Route[] routes;
 
     public RouteExecution() {

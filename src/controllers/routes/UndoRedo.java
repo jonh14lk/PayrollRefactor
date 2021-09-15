@@ -1,12 +1,12 @@
 package src.controllers.routes;
 
 import src.controllers.Route;
-import src.controllers.state.State;
+import src.controllers.memento.Memento;
 import src.utils.Utils;
 
 public class UndoRedo implements Route {
-    public boolean execute(State state) {
+    public boolean execute(Memento memento) {
         int option = Utils.readUndoRedo();
-        return option == 0 ? state.undo() : state.redo();
+        return option == 0 ? memento.undo() : memento.redo();
     }
 }

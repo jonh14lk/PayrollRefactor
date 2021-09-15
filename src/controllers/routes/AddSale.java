@@ -1,11 +1,11 @@
 package src.controllers.routes;
 
 import src.controllers.Route;
-import src.controllers.state.State;
+import src.controllers.memento.Memento;
 import src.utils.Utils;
 
 public class AddSale implements Route {
-    public boolean execute(State state) {
-        return state.company.createSale(Utils.readId());
+    public boolean execute(Memento memento) {
+        return memento.company.createSale(Utils.readId());
     }
 }
