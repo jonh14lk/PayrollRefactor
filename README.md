@@ -812,7 +812,7 @@ public Salaried() {
 </details>
 
 <details>
-<summary>Classe Salaried</summary>
+<summary>Classe Comissioned</summary>
 
 ```c
 public Comissioned() {
